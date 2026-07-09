@@ -238,42 +238,6 @@ The overall health status of **Apollo Launch** is evaluated as **YELLOW** (weigh
 
 ---
 
-## ⏰ Automated Execution Scheduler
-
-Aegis includes a dedicated scheduler script `scheduler.py` to automate audits of staged project plans in `data/input`.
-
-### Configuration
-Scheduler triggers and timings are configured in [scheduler_config.yaml](file:///Users/soumyajithazra/Documents/Project%20Health%20Ai/Project-Health-Agent/config/scheduler_config.yaml):
-- `input_directory`: folder to scan for status files (default: `data/input`).
-- `schedule.daily_time`: daily run-time (e.g. `"08:00"`).
-- `schedule.weekly_day` & `schedule.weekly_time`: weekly run day and time (e.g. `"friday"`, `"17:00"`).
-
-### CLI Triggers
-Run the scheduler using one of the following commands depending on execution context:
-
-*   **Immediate Run-Once Sweep**:
-    Process all staged updates in `data/input` immediately, compile deliverables (JSON, Markdown, PDF-ready text, PPTX slides), write trends, and exit:
-    ```bash
-    python scheduler.py --run-once
-    ```
-
-*   **Daily Repeating Daemon**:
-    Start the service to run daily at the configured trigger time (remains running in blocking loop):
-    ```bash
-    python scheduler.py --daily
-    ```
-
-*   **Weekly Repeating Daemon**:
-    Start the service to run weekly on the configured day and time (remains running in blocking loop):
-    ```bash
-    python scheduler.py --weekly
-    ```
-
-### Execution Logs
-All scheduler outputs, sweeps metadata, successfully completed file processing status, and exception traces are appended to `logs/scheduler.log`.
-
----
-
 ## 🔮 Future Improvements
 
 1. **Automated PDF Converter**: Integrate HTML-to-PDF compilers (e.g. `weasyprint`) to export high-fidelity PDF documents directly.
