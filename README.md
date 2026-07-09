@@ -1,4 +1,4 @@
-# 🛡️ Aegis Project Intelligence Agent
+# 🛡️ Aegis a RAG based Project Intelligence Agent (PM)
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 [![Streamlit App](https://img.shields.io/badge/Streamlit-Dashboard-red.svg)](https://streamlit.io/)
