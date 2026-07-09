@@ -1,0 +1,27 @@
+Project: Project Critical Overrun
+Start Date: 2026-01-01
+End Date: 2026-07-01
+Progress: 10%
+Budget: $100,000.00
+Spent: $250,000.00
+
+### Milestones
+* Initial Prototype | 2026-02-01 | Completed
+* System Core Code | 2026-04-01 | Delayed
+* Staging Deployment | 2026-06-01 | Delayed
+* Client Acceptance | 2026-07-01 | Delayed
+
+### Blockers
+* Severe database connection leaks preventing API kickoff
+* Deployment keys revoked by the hosting provider
+* Vendor contract dispute stalling front-end delivery
+
+### Risks
+* CRITICAL: Core developer resources resigning
+* HIGH: API schema incompatible with staging server
+
+### Resource Availability
+* We have a critical shortage of staffing in development and QA. Only one part-time engineer is active.
+
+### Stakeholder Comments
+* The client is concerned about the severe milestone delays and extremely worried about the mounting cost overrun.

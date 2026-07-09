@@ -1,0 +1,90 @@
+# Project Health Scoring Criteria Configuration
+# Configures the weights, thresholds, and rules for the deterministic health scoring engine.
+
+# Overall Health Status Score thresholds (RAG)
+health_score_thresholds:
+  green:
+    min: 80
+    max: 100
+  yellow:
+    min: 50
+    max: 79
+  red:
+    min: 0
+    max: 49
+
+# Metric Category Weights (Must sum to 1.0)
+metric_weights:
+  schedule: 0.30
+  budget: 0.20
+  milestones: 0.20
+  risks: 0.15
+  sentiment: 0.10
+  resources: 0.05
+
+# Category Specific Thresholds & Penalties
+schedule:
+  # Penalty points deducted from 100 if actual progress lags behind expected progress
+  # expected = elapsed time ratio, progress = actual progress percentage
+  # penalty = max(0, expected - progress) * multiplier
+  progress_lag_multiplier: 1.5
+
+budget:
+  # Penalty points deducted from 100 based on budget overrun ratio
+  # overrun = (spent - budget) / budget
+  # penalty = max(0, overrun) * multiplier
+  overrun_multiplier: 200.0
+
+milestones:
+  # Score = 100 - (count of delayed milestones / total milestones) * multiplier
+  delay_multiplier: 100.0
+
+risks:
+  # Deductions applied for open risks and blockers (Score starts at 100, min 0)
+  penalties:
+    blocker: 25
+    risk_critical: 20
+    risk_high: 15
+    risk_medium: 10
+    risk_low: 5
+
+sentiment:
+  # Scoring stakeholder comments (Score starts at base_score, max 100, min 0)
+  base_score: 80
+  positive_boost: 10
+  negative_penalty: 20
+  positive_keywords: 
+    - "happy"
+    - "pleased"
+    - "satisfied"
+    - "excellent"
+    - "great"
+    - "good"
+    - "successful"
+    - "on track"
+    - "confident"
+  negative_keywords: 
+    - "concerned"
+    - "worried"
+    - "unhappy"
+    - "dissatisfied"
+    - "poor"
+    - "issue"
+    - "delay"
+    - "risk"
+    - "block"
+    - "skeptical"
+
+resources:
+  # Resource availability scoring (Score starts at 100)
+  base_score: 100
+  deficit_penalty: 50
+  deficit_keywords: 
+    - "low"
+    - "limited"
+    - "deficit"
+    - "shortage"
+    - "missing"
+    - "tight"
+    - "constrained"
+    - "understaffed"

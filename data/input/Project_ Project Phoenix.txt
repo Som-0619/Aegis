@@ -1,0 +1,21 @@
+﻿Project: Project Phoenix
+Start Date: 2026-06-01
+End Date: 2026-12-01
+Progress: 20%
+Budget: 500000.00
+Spent: 480000.00
+Resource Availability: limited staffing in the core development team.
+
+
+### Milestones
+* Core Database Setup | 2026-06-15 | Completed
+* UI Integration Draft | 2026-07-01 | Delayed
+* Beta Launch | 2026-09-01 | Delayed
+
+
+### Blockers
+* Staging credentials not issued by server administrator
+
+
+### Stakeholder Comments
+* Client is extremely concerned about delayed milestones and poor communication.

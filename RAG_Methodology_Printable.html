@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Aegis Project Health Auditor: RAG Scoring Methodology</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: #0f172a;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 900px;
+            padding: 0 20px;
+            background-color: #f8fafc;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+            margin: 30px 0;
+        }
+
+        p,
+        li {
+            font-size: 1.05rem;
+            color: #334155;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f1f5f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .badge-green {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #166534;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-yellow {
+            background-color: rgba(234, 179, 8, 0.15);
+            color: #854d0e;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .badge-red {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #991b1b;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        code {
+            font-family: monospace;
+            background-color: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .math {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f1f5f9;
+            padding: 10px 15px;
+            border-left: 4px solid #475569;
+            margin: 15px 0;
+            display: block;
+            overflow-x: auto;
+        }
+
+        /* Print optimization styling */
+        @media print {
+            body {
+                background-color: #ffffff;
+                margin: 20mm;
+                font-size: 11pt;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #cbd5e1;
+                page-break-inside: avoid;
+            }
+
+            h1,
+            h2,
+            h3 {
+                page-break-after: avoid;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🛡️ Aegis Project Health Auditor: RAG Scoring Methodology</h1>
+    <div class="subtitle">PMO-Aegis-Methodology-v1.0 &bull; Confidential &bull; Executive Reference</div>
+
+    <h2>1. Purpose</h2>
+    <p>The <strong>Aegis Project Health Auditor (RAG) Framework</strong> establishes a standardized, repeatable
+        methodology to evaluate the execution health of enterprise projects. It implements a <strong>deterministic,
+            quantitative engine</strong> that computes project health scores based on key operational signals, and then
+        utilizes <strong>Generative AI strictly for reasoning and summary drafting after the objective score has been
+            locked</strong>.</p>
+
+    <p>RAG (Red, Amber, Green) is used to prioritize PMO intervention:</p>
+    <ul>
+        <li><span class="badge badge-green">GREEN (80.0 - 100.0)</span>: Project is healthy. No PMO intervention is
+            required.</li>
+        <li><span class="badge badge-yellow">YELLOW (50.0 - 79.9)</span>: Operational slippages detected. Local PMO
+            action required.</li>
+        <li><span class="badge badge-red">RED (0.0 - 49.9)</span>: Critical baseline breach. Immediate strategic
+            recovery audit required.</li>
+    </ul>
+
+    <hr>
+
+    <h2>2. Inputs</h2>
+    <p>The framework maps unstructuredweekly status reports into a structured 13-field Pydantic schema:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Field Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>project_name</code></td>
+                <td>Name of the target project.</td>
+            </tr>
+            <tr>
+                <td><code>planned_start_date</code> / <code>planned_end_date</code></td>
+                <td>Baseline timeline boundaries.</td>
+            </tr>
+            <tr>
+                <td><code>current_progress</code></td>
+                <td>Self-reported progress percentage or status.</td>
+            </tr>
+            <tr>
+                <td><code>budget</code> / <code>budget_spent</code></td>
+                <td>Financial parameters.</td>
+            </tr>
+            <tr>
+                <td><code>milestones</code> / <code>delayed_milestones</code></td>
+                <td>Delivered vs. late milestones tracker.</td>
+            </tr>
+            <tr>
+                <td><code>open_risks</code> / <code>blockers</code></td>
+                <td>Active operational constraints.</td>
+            </tr>
+            <tr>
+                <td><code>stakeholder_comments</code></td>
+                <td>Raw feedback notes.</td>
+            </tr>
+            <tr>
+                <td><code>resource_availability</code></td>
+                <td>Headcount and staffing logs.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>3. Evaluation Framework</h2>
+
+    <div class="card">
+        <h3>I. Schedule (Weight: 30%)</h3>
+        <p><strong>Evaluation:</strong> Compares elapsed timeline ratio against reported progress. If actual progress is
+            less than expected progress, a progress lag penalty is calculated:</p>
+        <div class="math">
+            Expected Progress = [(Current Date - Start Date) / (End Date - Start Date)] * 100<br>
+            Lag = Expected Progress - Actual Progress<br>
+            Schedule Score = max(0.0, 100.0 - (Lag * 1.5))
+        </div>
+        <p><strong>Why it matters:</strong> Identifies if work velocity is sufficient to meet deadlines.</p>
+    </div>
+
+    <div class="card">
+        <h3>II. Budget (Weight: 20%)</h3>
+        <p><strong>Evaluation:</strong> Measures cost overruns. If spent exceeds baseline budget, a penalty is applied
+            based on overrun ratio:</p>
+        <div class="math">
+            Overrun Ratio = (Spent - Budget) / Budget<br>
+            Budget Score = max(0.0, 100.0 - (Overrun Ratio * 200.0))
+        </div>
+        <p><strong>Why it matters:</strong> Controls cost variances and protects margins.</p>
+    </div>
+
+    <div class="card">
+        <h3>III. Milestones (Weight: 20%)</h3>
+        <p><strong>Evaluation:</strong> Evaluates milestone completion rates:</p>
+        <div class="math">
+            Milestones Score = max(0.0, 100.0 - ((Delayed Milestones Count / Total Milestones Count) * 100.0))
+        </div>
+        <p><strong>Why it matters:</strong> Reflects actual deliverables completed vs. planned.</p>
+    </div>
+
+    <div class="card">
+        <h3>IV. Risks (Weight: 15%)</h3>
+        <p><strong>Evaluation:</strong> Deducts penalty points from a 100.0 baseline for active blockers and risk
+            severities:</p>
+        <ul>
+            <li>Blocker: -25 points</li>
+            <li>Critical Risk: -20 points</li>
+            <li>High Risk: -15 points</li>
+            <li>Medium Risk: -10 points</li>
+            <li>Low Risk: -5 points</li>
+        </ul>
+        <p><strong>Why it matters:</strong> Quantifies active roadblocks and mitigates prospective failures.</p>
+    </div>
+
+    <div class="card">
+        <h3>V. Stakeholder Sentiment (Weight: 10%)</h3>
+        <p><strong>Evaluation:</strong> Audits comment logs. Scoring starts at a baseline of 80.0. A case-insensitive
+            match on keyword lists boosts or penalizes the score (capped between 0 and 100):</p>
+        <ul>
+            <li><strong>Positive Boost (+10 points):</strong> <i>happy, pleased, satisfied, excellent, great, good,
+                    successful, on track, confident</i></li>
+            <li><strong>Negative Penalty (-20 points):</strong> <i>concerned, worried, unhappy, dissatisfied, poor,
+                    issue, delay, risk, block, skeptical</i></li>
+        </ul>
+        <p><strong>Why it matters:</strong> Measures sponsor confidence and client satisfaction.</p>
+    </div>
+
+    <div class="card">
+        <h3>VI. Resources (Weight: 5%)</h3>
+        <p><strong>Evaluation:</strong> Scans resource logs. Starts at 100.0. If deficit keywords are detected (<i>low,
+                limited, deficit, shortage, missing, tight, constrained, understaffed</i>), a deficit penalty is
+            applied:</p>
+        <div class="math">
+            Resources Score = 100.0 - 50.0 = 50.0
+        </div>
+        <p><strong>Why it matters:</strong> Ensures adequate staffing to maintain velocity.</p>
+    </div>
+
+    <hr>
+
+    <h2>4. Weight Distribution</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Indicator Category</th>
+                <th>Weight</th>
+                <th>Primary Calculation Driver</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Schedule</strong></td>
+                <td>30%</td>
+                <td>Timeline Elapsed Ratio vs. Actual Progress</td>
+            </tr>
+            <tr>
+                <td><strong>Budget</strong></td>
+                <td>20%</td>
+                <td>Cost Overrun Ratio</td>
+            </tr>
+            <tr>
+                <td><strong>Milestones</strong></td>
+                <td>20%</td>
+                <td>Ratio of Delayed Milestones</td>
+            </tr>
+            <tr>
+                <td><strong>Risks</strong></td>
+                <td>15%</td>
+                <td>Count of Blockers and Risk Severities</td>
+            </tr>
+            <tr>
+                <td><strong>Sentiment</strong></td>
+                <td>10%</td>
+                <td>Keyword Scanning of Stakeholder Comments</td>
+            </tr>
+            <tr>
+                <td><strong>Resources</strong></td>
+                <td>5%</td>
+                <td>Keyword Scanning of Resource Availability</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>5. Assumptions & Gaps Handling</h2>
+    <p>When project updates are partial, Aegis applies default safety assumptions to ensure analysis continuity:</p>
+    <ul>
+        <li><strong>Dates:</strong> If start/end dates are missing, the Schedule Score defaults to <code>100.0</code>.
+        </li>
+        <li><strong>Budget & Spent:</strong> If missing, the Budget Score defaults to <code>100.0</code>.</li>
+        <li><strong>Milestones:</strong> If empty, the Milestones Score defaults to <code>100.0</code>.</li>
+        <li><strong>Risks & Blockers:</strong> If empty, the Risks Score defaults to <code>100.0</code>.</li>
+        <li><strong>Sentiment / Resources:</strong> Sentiment defaults to <code>80.0</code>. Resource status defaults to
+            <code>100.0</code>.
+        </li>
+    </ul>
+
+    <p>To preserve transparency, Aegis calculates a <strong>Data Confidence Score</strong> based on the completeness of
+        the 13 required schema fields:</p>
+    <div class="math">
+        Confidence Score = (Count of non-null extracted fields / 13) * 100%
+    </div>
+    <p>All missing parameters are explicitly logged in a <strong>Missing Data Log</strong> at the top of the report to
+        flag gaps to the PMO (e.g. <i>"Uncertainty: Budget spent is missing from source files..."</i>), preventing the
+        AI from fabricating parameters.</p>
+
+    <hr>
+
+    <h2>6. Example Evaluation</h2>
+    <div class="card">
+        <strong>Project Alpha</strong>
+        <ul>
+            <li>Schedule: Start Date: <code>2026-05-01</code>, End Date: <code>2026-10-01</code> (153 days). Progress
+                reported: <code>35%</code>. Evaluation Date: <code>2026-07-08</code> (Elapsed: 68 days).</li>
+            <li>Financials: Budget: <code>$100,000</code>, Spent: <code>$110,000</code> (10% overrun).</li>
+            <li>Milestones: 3 total (2 completed, 1 delayed).</li>
+            <li>Risks: 1 blocker, 1 high-severity risk.</li>
+            <li>Sentiment: 1 positive keyword ("pleased"), 2 negative keywords ("concerned", "delay").</li>
+            <li>Resources: 1 deficit keyword ("limited").</li>
+        </ul>
+
+        <strong>Calculated Sub-Scores:</strong>
+        <ol>
+            <li>Schedule Score: Expected = 44.4%, Lag = 9.4%. Score = 100.0 - (9.4 * 1.5) = <strong>85.9</strong></li>
+            <li>Budget Score: Overrun = 10%. Score = 100.0 - (0.10 * 200.0) = <strong>80.0</strong></li>
+            <li>Milestones Score: Delay = 33.3%. Score = 100.0 - 33.3 = <strong>66.7</strong></li>
+            <li>Risks Score: Blocker (25) + High Risk (15) = 40. Score = 100.0 - 40 = <strong>60.0</strong></li>
+            <li>Sentiment Score: Base = 80.0 + 10.0 - 20.0 - 20.0 = <strong>50.0</strong></li>
+            <li>Resources Score: Deficit penalty = 50. Score = 100.0 - 50 = <strong>50.0</strong></li>
+        </ol>
+
+        <strong>Weighted Aggregation:</strong>
+        <div class="math">
+            Overall Score = (85.9 * 0.30) + (80.0 * 0.20) + (66.7 * 0.20) + (60.0 * 0.15) + (50.0 * 0.10) + (50.0 *
+            0.05)<br>
+            Overall Score = 25.77 + 16.00 + 13.34 + 9.00 + 5.00 + 2.50 = 71.6
+        </div>
+        <p><strong>Weighted Health Score:</strong> <code>71.6 / 100</code> &rarr; <span
+                class="badge badge-yellow">YELLOW</span> status.</p>
+    </div>
+
+</body>
+
+</html>

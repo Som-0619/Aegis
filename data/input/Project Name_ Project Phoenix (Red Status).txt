@@ -1,0 +1,99 @@
+﻿Project Name: Critical Banking Migration
+
+
+Current Progress: 10%
+
+
+Planned Progress: 95%
+
+
+Schedule Delay: 85%
+
+
+Budget Allocated: 100000
+
+
+Budget Spent: 180000
+
+
+Budget Burn: 180%
+
+
+Project Status: CRITICAL
+
+
+Milestones
+
+
+Completed: 1
+
+
+Delayed: 8
+
+
+Missed: 6
+
+
+Critical Milestones Missed: 6
+
+
+Open Blockers: 15
+
+
+Critical Blockers: 10
+
+
+High Risks: 12
+
+
+Medium Risks: 2
+
+
+Low Risks: 0
+
+
+Stakeholder Sentiment: Very Negative
+
+
+Customer Satisfaction: Very Low
+
+
+Executive Sponsor: Escalated
+
+
+Client Confidence: Lost
+
+
+Resource Availability: 20%
+
+
+Team Availability: Critical
+
+
+Dependencies Blocked: Yes
+
+
+Vendor Delay: Yes
+
+
+Security Approval: Pending
+
+
+Testing Status: Failed
+
+
+Deployment Status: Blocked
+
+
+Production Readiness: No
+
+
+Overall Health: Critical
+
+
+Recommendation:
+Immediate executive intervention required.
+
+
+Summary:
+The project has exceeded budget, missed multiple critical milestones, is severely behind schedule, has numerous unresolved blockers, extremely negative stakeholder sentiment, and is at immediate risk of failure.

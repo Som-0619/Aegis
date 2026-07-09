@@ -1,0 +1,27 @@
+# RAG Pipeline and Evaluation Configuration
+# Defines how project documents are parsed, indexed, retrieved, and validated against LLM outputs.
+
+retrieval_settings:
+  chunk_size: 500
+  chunk_overlap: 50
+  similarity_metric: "cosine"
+  top_k_documents: 5
+  relevance_threshold: 0.70
+
+generation_rules:
+  # Instruct the LLM strictly on how to behave regarding facts
+  strict_context_grounding: true
+  fallback_response: "I cannot answer this based on the provided project documents, as the required information is missing."
+  max_tokens: 1500
+  temperature: 0.0
+
+citation_rules:
+  require_citations: true
+  citation_format: "[DocumentName:PageNumber]"
+  validate_citations: true
+
+evaluation_metrics:
+  # Thresholds for automated RAG quality checks
+  faithfulness_threshold: 0.85     # Proportion of statements in report supported by source documents
+  answer_relevance_threshold: 0.80  # Alignment of generated answer with the initial question/scope
+  context_precision_threshold: 0.75 # Percentage of retrieved chunks that are actually relevant

@@ -1,0 +1,24 @@
+# Aegis Scheduler Configuration
+# Configures the weekly execution pipeline boundaries, logs, and triggers.
+
+# Directory to scan for incoming weekly project plans
+input_directory: "data/input"
+
+# Default LLM engine model name to pass to generator pipelines
+model_name: "gemini-2.5-flash"
+
+# Logging configuration
+logging:
+  log_file: "logs/scheduler.log"
+  log_level: "INFO"
+
+# APScheduler time offsets for recurring executions
+schedule:
+  # Daily trigger time (24h format HH:MM)
+  daily_time: "08:00"
+
+  # Weekly day of week trigger (monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+  weekly_day: "friday"
+
+  # Weekly trigger time (24h format HH:MM)
+  weekly_time: "17:00"

@@ -1,0 +1,20 @@
+# Streamlit Frontend and Charts
+streamlit>=1.30.0
+plotly>=5.18.0
+pandas>=2.1.0
+
+# Schema and Validation
+pydantic>=2.5.0
+pyyaml>=6.0.1
+
+# Document Compilations
+python-pptx>=0.6.21
+python-docx>=1.1.0
+openpyxl>=3.1.2
+pymupdf>=1.23.0
+apscheduler>=3.10.4
+
+# Testing & Dev
+pytest>=7.4.0
+pytest-mock>=3.12.0
+ruff>=0.1.5

@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.toast
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+/logs/
+outputs/logs/*
+!outputs/logs/.gitkeep
+
+# Data (Ignore processed files, keep sample inputs and gitkeeps)
+data/processed/*
+!data/processed/.gitkeep
+
+# Generated Outputs
+outputs/weekly_reports/*
+!outputs/weekly_reports/.gitkeep
+outputs/presentations/*
+!outputs/presentations/.gitkeep
+outputs/monthly_reports/*
+!outputs/monthly_reports/.gitkeep
